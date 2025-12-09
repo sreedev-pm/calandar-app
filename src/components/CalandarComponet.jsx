@@ -1,34 +1,20 @@
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
-import data from '../../dummy.json'
-import { useState } from 'react'
+import { useSelector,useDispatch } from 'react-redux'
+import { useEffect } from 'react'
+
+
+import { refreshEvents } from '../store/slices/calandarSlices.js';
+
+
 
 const localizer = momentLocalizer(moment)
-
 const CalandarComponet = () => {
-  const initializeEvents = () => {
-    const events = [];
-
-    Object.keys(data).forEach(dateStr => {
-      const items = data[dateStr];
-
-      items.forEach(obj => {
-        const user = Object.keys(obj)[0];
-        const count = obj[user];
-        const [day, month, year] = dateStr.split("-");
-        const eventDate = new Date(`${year}-${month}-${day}`);
-
-        events.push({
-          title: `${user} - ${count}`,
-          start: eventDate,
-          end: eventDate
-        });
-      });
-    });
-
-    return events;
-  }
-  const[events,setEvents]=useState(initializeEvents());
+  const events = useSelector((state) => state.calendar.events);
+  useEffect(() => {
+    dispatch(refreshEvents())
+  }, []);
+  const dispatch = useDispatch();
   const handleSelectSlot = ({ start, end }) => {
     console.log("Selected slot:", start, end);
   }
